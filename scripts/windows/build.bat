@@ -15,5 +15,4 @@ call "%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\v
 REM Make sure to use MSVC CMake for building dawn
 set "PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;%PATH%"
 
-echo Building Dawn
-make dawn-debug-setup
+make build-engine

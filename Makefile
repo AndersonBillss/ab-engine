@@ -1,4 +1,11 @@
 BUILD_DIR := build/
+ENGINE_OUT := $(BUILD_DIR)engine/
+
+build-engine:
+	cmake -S . -B $(ENGINE_OUT)
+	cmake --build $(ENGINE_OUT)
+
+
 
 DAWN_SRC := third_party/dawn
 DAWN_OUT_DEBUG := $(BUILD_DIR)dawn/debug
