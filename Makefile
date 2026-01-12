@@ -1,30 +1,21 @@
-BUILD_DIR = ./build/
-
-all: run
-
-run: build
-	./build/bin/program.exe
-
-build:
-	@mkdir -p ./build
-	@mkdir -p ./build/bin
-	g++ -Wall -Wextra source/main.cpp -IC:/msys64/mingw64/include/GLFW -lglfw3 -o ./build/bin/program.exe
-
-clean:
-	rm -rf build
+BUILD_DIR := build/
 
 DAWN_SRC := third_party/dawn
-DAWN_OUT := $(BUILD_DIR)/dawn
+DAWN_OUT_DEBUG := $(BUILD_DIR)dawn/debug
 
-dawn-initial-setup: dawn-deps dawn-build
+.PHONY: dawn-debug dawn-debug-configure dawn-debug-build dawn-deps
+
+dawn-debug-setup: dawn-deps dawn-debug-build
 
 dawn-deps:
 	cd $(DAWN_SRC) && python tools/fetch_dawn_dependencies.py
 
-dawn-configure:
-	mkdir -p ../../$(DAWN_OUT)
-	cd $(DAWN_SRC) && cmake -GNinja ../../$(DAWN_OUT)
+dawn-debug-configure:
+	mkdir -p $(DAWN_OUT_DEBUG)
+	cmake -S $(DAWN_SRC) \
+	      -B $(DAWN_OUT_DEBUG) \
+	      -GNinja \
+	      -DCMAKE_BUILD_TYPE=Debug
 
-dawn-build: dawn-configure
-	cd $(DAWN_SRC) && cmake --build .
-	
+dawn-debug-build: dawn-debug-configure
+	cmake --build $(DAWN_OUT_DEBUG)
