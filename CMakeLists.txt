@@ -6,27 +6,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Threads REQUIRED)
 
+# Link Dawn 
 list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_install/dawn/debug")
-
 find_package(Dawn CONFIG REQUIRED)
 
-include(FetchContent)
-
-FetchContent_Declare(
-  glfw
-  GIT_REPOSITORY https://github.com/glfw/glfw.git
-  GIT_TAG        3.3.9
-)
-
+# Link GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/glfw)
 
-FetchContent_MakeAvailable(glfw)
-
-
+# Add project files
 add_executable(ab_engine
   src/main.cpp
 )
 
-target_link_libraries(ab_engine PRIVATE dawn::webgpu_dawn)
+target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
+
+target_link_libraries(ab_engine PRIVATE
+  dawn::webgpu_dawn
+  glfw
+)
