@@ -7,7 +7,8 @@ run-engine-debug: build-engine-debug
 build-engine-debug:
 	cmake -S . -B $(ENGINE_OUT) -GNinja \
   		-DCMAKE_C_COMPILER=cl \
-  		-DCMAKE_CXX_COMPILER=cl
+  		-DCMAKE_CXX_COMPILER=cl \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 	cmake --build $(ENGINE_OUT)
 
 
@@ -30,7 +31,7 @@ dawn-debug-configure:
 		  -DCMAKE_C_COMPILER=cl \
 		  -DCMAKE_CXX_COMPILER=cl \
 	      -DCMAKE_BUILD_TYPE=Debug \
-		  -DDAWN_ENABLE_INSTALL=ON
+		  -DDAWN_ENABLE_INSTALL=ON \
 
 dawn-debug-build: dawn-debug-configure
 	cmake --build $(DAWN_OUT_DEBUG)

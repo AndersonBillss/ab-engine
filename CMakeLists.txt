@@ -14,7 +14,7 @@ find_package(Dawn CONFIG REQUIRED)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(third_party/glfw)
+add_subdirectory(third_party/dawn/third_party/glfw)
 
 # Add project files
 add_executable(ab_engine
