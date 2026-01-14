@@ -5,7 +5,9 @@ run-engine-debug: build-engine-debug
 	./build/engine/ab_engine.exe
 
 build-engine-debug:
-	cmake -S . -B $(ENGINE_OUT)
+	cmake -S . -B $(ENGINE_OUT) -GNinja \
+  		-DCMAKE_C_COMPILER=cl \
+  		-DCMAKE_CXX_COMPILER=cl
 	cmake --build $(ENGINE_OUT)
 
 
@@ -25,6 +27,8 @@ dawn-debug-configure:
 	cmake -S $(DAWN_SRC) \
 	      -B $(DAWN_OUT_DEBUG) \
 	      -GNinja \
+		  -DCMAKE_C_COMPILER=cl \
+		  -DCMAKE_CXX_COMPILER=cl \
 	      -DCMAKE_BUILD_TYPE=Debug \
 		  -DDAWN_ENABLE_INSTALL=ON
 
