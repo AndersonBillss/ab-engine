@@ -1,5 +1,6 @@
-BUILD_DIR := build/
-ENGINE_OUT := $(BUILD_DIR)engine/
+BUILD_DIR := build
+ENGINE_OUT := $(BUILD_DIR)/engine
+ENGINE_WEB_OUT := $(BUILD_DIR)/web-engine
 
 run-engine-debug: build-engine-debug
 	./build/engine/ab_engine.exe
@@ -11,6 +12,7 @@ build-engine-debug:
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 	cmake --build $(ENGINE_OUT)
 
+# build-engine-web:
 
 DAWN_SRC := third_party/dawn
 DAWN_OUT_DEBUG := $(BUILD_DIR)dawn/debug
