@@ -41,26 +41,7 @@
             overflow-y: scroll;
             background-color: #121212;
           "
-        >
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-          <li>HELLO, WORLD!!!!</li>
-        </div>
+        ></div>
       </div>
     </div>
 
@@ -78,6 +59,7 @@
       var Module = {
         print(...args) {
           console.log(...args);
+          outputElement.innerHTML += `<li>${args.join(" ")}</li>`;
         },
         canvas: canvasElement,
         totalDependencies: 0,
@@ -141,10 +123,15 @@
           terminalTopBar.classList.remove("terminal-grabbed");
           outputElement.classList.remove("no-select");
         }
-        localStorage.setItem("terminalHeight", terminalHeight);
+        if (isNaN(terminalHeight)) {
+          localStorage.setItem("terminalHeight", minTerminalHeight);
+        } else {
+          localStorage.setItem("terminalHeight", terminalHeight);
+        }
       }
 
       function setTerminalHeight(height) {
+        if (isNaN(height)) height = minTerminalHeight;
         canvasHeight = window.innerHeight - height;
         if (height <= minTerminalHeight) height = minTerminalHeight;
         if (canvasHeight <= minCanvasHeight)
@@ -186,7 +173,7 @@
         setTerminalGrabbed(false);
       });
     </script>
-    <!-- {{{ SCRIPT }}} -->
+    {{{ SCRIPT }}}
     <style>
       * {
         margin: 0;
