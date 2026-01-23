@@ -6,51 +6,39 @@
     <title>AB Engine</title>
   </head>
   <body>
-    <div style="height: 100vh; display: flex; flex-direction: column; min-height: 0;">
-      <div style="flex: 1 1 auto; flex-shrink: 1;">
-        <canvas
-          id="canvas"
-          style="width: 100%; height: 100%; display: block;"
-          oncontextmenu="event.preventDefault()"
-          tabindex="-1"
-        ></canvas>
-      </div>
-      <div style="flex: 0 0 2px; background-color: white;"></div>
-      <div style="flex: 0 0 200px; min-height: 200px;">
-        <textarea
-          id="output"
-          style="
-            resize: none;
-            background-color: black;
-            border: 10px black solid;
-            color: white;
-            display: block;
-            width: 100%;
-            height: 100%;
-            overflow-y: scroll;
-            box-sizing: border-box;
-          "
-        ></textarea>
-      </div>
+    <div style="width: 100vw; height: 100vh">
+      <canvas
+        id="canvas"
+        style="width: 100%; height: 100%; display: block"
+        oncontextmenu="event.preventDefault()"
+        tabindex="-1"
+      ></canvas>
     </div>
 
     <script type="text/javascript">
       var canvasElement = document.getElementById("canvas");
-      var outputElement = document.getElementById("output");
-      if (outputElement) outputElement.value = ""; // clear browser cache
+      const ctx = canvas.getContext("2d");
 
       var Module = {
         print(...args) {
           console.log(...args);
-          if (outputElement) {
-            var text = args.join(" ");
-            outputElement.value += text + "\n";
-            outputElement.scrollTop = outputElement.scrollHeight; // focus on bottom
-          }
         },
         canvas: canvasElement,
         totalDependencies: 0,
       };
+
+      window.addEventListener("resize", resizeCanvas);
+
+      function resizeCanvas() {
+        console.log("RESIZING CANVAS");
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
     </script>
     {{{ SCRIPT }}}
     <style>
@@ -58,6 +46,7 @@
         margin: 0;
         padding: 0;
         border: 0;
+        font-family: sans-serif;
       }
       html body {
         height: 100%;
