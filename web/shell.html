@@ -61,6 +61,12 @@
           console.log(...args);
           outputElement.innerHTML += `<li>${args.join(" ")}</li>`;
         },
+        locateFile(path) {
+          if (path.endsWith(".wasm")) {
+            return path + "?v=" + Date.now();
+          }
+          return path;
+        },
         canvas: canvasElement,
         totalDependencies: 0,
       };
