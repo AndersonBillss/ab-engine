@@ -18,6 +18,7 @@
       </div>
 
       <div
+        draggable="false"
         id="terminal"
         style="display: flex; flex-direction: column; height: 100px"
       >
@@ -28,7 +29,9 @@
             background-color: #2b2b2b;
             position: relative;
           "
-        ></div>
+        >
+          <div id="terminal-top-bar"></div>
+        </div>
         <div
           class="scrollbar-black"
           id="output"
@@ -39,7 +42,7 @@
             background-color: #121212;
           "
         >
-          <li>HELLO, WORLD!!!!</li>
+          <li draggable="false">HELLO, WORLD!!!!</li>
           <li>HELLO, WORLD!!!!</li>
           <li>HELLO, WORLD!!!!</li>
           <li>HELLO, WORLD!!!!</li>
@@ -64,10 +67,12 @@
     <script type="text/javascript">
       var canvasElement = document.getElementById("canvas");
       var canvasParentElement = document.getElementById("canvas-parent");
+      const ctx = canvas.getContext("2d");
 
       let minTerminalHeight = 100;
       var terminalElement = document.getElementById("terminal");
-      const ctx = canvas.getContext("2d");
+
+      var terminalTopBar = document.getElementById("terminal-top-bar");
 
       var Module = {
         print(...args) {
@@ -78,6 +83,7 @@
       };
 
       window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
 
       function resizeCanvas() {
         const rect = canvasParentElement.getBoundingClientRect();
@@ -113,31 +119,31 @@
         }
       }
 
+      function setGrabbedTerminal(grabbed) {
+        grabbedTerminal = grabbed;
+        if (grabbed) {
+          document.body.style.cursor = "n-resize";
+          terminalTopBar.classList.add("terminal-grabbed");
+        } else {
+          document.body.style.cursor = "auto";
+          terminalTopBar.classList.remove("terminal-grabbed");
+        }
+      }
+
       let mouseY = 0;
       let grabbedTerminal = false;
-      window.addEventListener("mousedown", () => {
-        const terminalElementTop = terminalElement.getBoundingClientRect().top;
-        const maxDistance = 20;
-
-        if (
-          terminalElementTop - maxDistance < mouseY &&
-          terminalElementTop + maxDistance > mouseY &&
-          terminalOpen
-        ) {
-          grabbedTerminal = true;
-        }
+      terminalTopBar.addEventListener("mousedown", () => {
+        setGrabbedTerminal(true);
       });
+
       window.addEventListener("mouseup", () => {
-        grabbedTerminal = false;
+        setGrabbedTerminal(false);
       });
       window.addEventListener("mousemove", (e) => {
         mouseY = e.clientY;
         if (grabbedTerminal) {
-          console.log("TERMINAL GRABBED");
           const mouseHeight = window.innerHeight - mouseY;
           terminalElement.style.height = `${mouseHeight}px`;
-        } else {
-          console.log("TERMINAL NOT GRABBED");
         }
       });
 
@@ -154,7 +160,7 @@
       });
       window.addEventListener("blur", () => {
         controlIsHeld = false;
-        grabbedTerminal = false;
+        setGrabbedTerminal(false);
       });
     </script>
     <!-- {{{ SCRIPT }}} -->
@@ -179,7 +185,7 @@
         scrollbar-width: auto;
       }
 
-      .scrollbar-black::-webkit-scrollbar {
+      .scrollbar-black::-webit-scrollbar {
         width: 12px;
       }
 
@@ -189,6 +195,38 @@
 
       .scrollbar-black::-webkit-scrollbar-thumb {
         background: #666;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+        }
+      }
+      #terminal-top-bar {
+        background-color: rgb(0, 170, 255);
+        position: absolute;
+        height: 4px;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+      }
+      #terminal-top-bar:hover {
+        animation-name: fadeIn;
+        animation-delay: 0.25s;
+        animation-duration: 0.25s;
+        animation-fill-mode: both;
+        cursor: n-resize;
+      }
+      #terminal-top-bar.terminal-grabbed {
+        opacity: 1;
+        animation-name: fadeIn;
+        animation-duration: 0.25s;
+        animation-fill-mode: both;
       }
     </style>
   </body>
