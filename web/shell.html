@@ -111,7 +111,7 @@
 
       let terminalHeight =
         parseInt(localStorage.getItem("terminalHeight")) ?? minTerminalHeight;
-      terminalElement.style.height = `${terminalHeight}px`;
+      setTerminalHeight(terminalHeight);
 
       let terminalOpen = localStorage.getItem("terminalOpen")
         ? localStorage.getItem("terminalOpen") == "true"
@@ -144,6 +144,15 @@
         localStorage.setItem("terminalHeight", terminalHeight);
       }
 
+      function setTerminalHeight(height) {
+        canvasHeight = window.innerHeight - height;
+        if (height <= minTerminalHeight) height = minTerminalHeight;
+        if (canvasHeight <= minCanvasHeight)
+          height = window.innerHeight - minCanvasHeight;
+        terminalElement.style.height = `${height}px`;
+        resizeCanvas();
+      }
+
       let mouseY = 0;
       let grabbedTerminal = false;
       terminalTopBar.addEventListener("mousedown", () => {
@@ -157,10 +166,7 @@
         mouseY = e.clientY;
         if (grabbedTerminal) {
           terminalHeight = window.innerHeight - mouseY;
-          if (terminalHeight <= minTerminalHeight || mouseY <= minCanvasHeight)
-            return;
-          terminalElement.style.height = `${terminalHeight}px`;
-          resizeCanvas();
+          setTerminalHeight(terminalHeight);
         }
       });
 
