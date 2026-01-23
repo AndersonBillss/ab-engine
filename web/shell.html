@@ -108,19 +108,28 @@
         return { width: rect.width, height: rect.height, dpr };
       }
 
-      let terminalOpen = false;
-      setTerminalOpen(true);
+      let terminalHeight =
+        parseInt(localStorage.getItem("terminalHeight")) ?? 100;
+      terminalElement.style.height = `${terminalHeight}px`;
+
+      let terminalOpen = localStorage.getItem("terminalOpen")
+        ? localStorage.getItem("terminalOpen") == "true"
+        : true;
+      setTerminalOpen(terminalOpen);
+
       function setTerminalOpen(open) {
         terminalOpen = open;
         if (terminalOpen) {
           terminalElement.style.display = "flex";
+          localStorage.setItem("terminalOpen", "true");
         } else {
           terminalElement.style.display = "none";
+          localStorage.setItem("terminalOpen", "false");
         }
         resizeCanvas();
       }
 
-      function setGrabbedTerminal(grabbed) {
+      function setTerminalGrabbed(grabbed) {
         grabbedTerminal = grabbed;
         if (grabbed) {
           document.body.style.cursor = "n-resize";
@@ -129,22 +138,23 @@
           document.body.style.cursor = "auto";
           terminalTopBar.classList.remove("terminal-grabbed");
         }
+        localStorage.setItem("terminalHeight", terminalHeight);
       }
 
       let mouseY = 0;
       let grabbedTerminal = false;
       terminalTopBar.addEventListener("mousedown", () => {
-        setGrabbedTerminal(true);
+        setTerminalGrabbed(true);
       });
 
       window.addEventListener("mouseup", () => {
-        setGrabbedTerminal(false);
+        setTerminalGrabbed(false);
       });
       window.addEventListener("mousemove", (e) => {
         mouseY = e.clientY;
         if (grabbedTerminal) {
-          const mouseHeight = window.innerHeight - mouseY;
-          terminalElement.style.height = `${mouseHeight}px`;
+          terminalHeight = window.innerHeight - mouseY;
+          terminalElement.style.height = `${terminalHeight}px`;
           resizeCanvas();
         }
       });
@@ -162,7 +172,7 @@
       });
       window.addEventListener("blur", () => {
         controlIsHeld = false;
-        setGrabbedTerminal(false);
+        setTerminalGrabbed(false);
       });
     </script>
     <!-- {{{ SCRIPT }}} -->
