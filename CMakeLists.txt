@@ -15,6 +15,7 @@ if(EMSCRIPTEN)
   target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMSCRIPTEN)
 
   target_link_options(ab_engine PRIVATE
+    "--shell-file" "../../web/shell.html"
     "-sUSE_WEBGPU=1"
     "-sASSERTIONS=1"
     "-sALLOW_MEMORY_GROWTH=1"
