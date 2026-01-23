@@ -113,6 +113,34 @@
         }
       }
 
+      let mouseY = 0;
+      let grabbedTerminal = false;
+      window.addEventListener("mousedown", () => {
+        const terminalElementTop = terminalElement.getBoundingClientRect().top;
+        const maxDistance = 20;
+
+        if (
+          terminalElementTop - maxDistance < mouseY &&
+          terminalElementTop + maxDistance > mouseY &&
+          terminalOpen
+        ) {
+          grabbedTerminal = true;
+        }
+      });
+      window.addEventListener("mouseup", () => {
+        grabbedTerminal = false;
+      });
+      window.addEventListener("mousemove", (e) => {
+        mouseY = e.clientY;
+        if (grabbedTerminal) {
+          console.log("TERMINAL GRABBED");
+          const mouseHeight = window.innerHeight - mouseY;
+          terminalElement.style.height = `${mouseHeight}px`;
+        } else {
+          console.log("TERMINAL NOT GRABBED");
+        }
+      });
+
       let controlIsHeld = false;
       window.addEventListener("keydown", (e) => {
         if (e.key == "Control") controlIsHeld = true;
@@ -126,6 +154,7 @@
       });
       window.addEventListener("blur", () => {
         controlIsHeld = false;
+        grabbedTerminal = false;
       });
     </script>
     <!-- {{{ SCRIPT }}} -->
