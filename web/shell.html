@@ -20,7 +20,7 @@
       <div
         draggable="false"
         id="terminal"
-        style="display: flex; flex-direction: column; height: 100px"
+        style="display: flex; flex-direction: column; height: 0"
       >
         <div
           style="
@@ -71,8 +71,8 @@
 
       let minTerminalHeight = 100;
       var terminalElement = document.getElementById("terminal");
-
       var terminalTopBar = document.getElementById("terminal-top-bar");
+      var outputElement = document.getElementById("output");
 
       var Module = {
         print(...args) {
@@ -109,7 +109,7 @@
       }
 
       let terminalHeight =
-        parseInt(localStorage.getItem("terminalHeight")) ?? 100;
+        parseInt(localStorage.getItem("terminalHeight")) ?? minTerminalHeight;
       terminalElement.style.height = `${terminalHeight}px`;
 
       let terminalOpen = localStorage.getItem("terminalOpen")
@@ -134,9 +134,11 @@
         if (grabbed) {
           document.body.style.cursor = "n-resize";
           terminalTopBar.classList.add("terminal-grabbed");
+          outputElement.classList.add("no-select");
         } else {
           document.body.style.cursor = "auto";
           terminalTopBar.classList.remove("terminal-grabbed");
+          outputElement.classList.remove("no-select");
         }
         localStorage.setItem("terminalHeight", terminalHeight);
       }
@@ -154,6 +156,7 @@
         mouseY = e.clientY;
         if (grabbedTerminal) {
           terminalHeight = window.innerHeight - mouseY;
+          if (terminalHeight <= minTerminalHeight) return;
           terminalElement.style.height = `${terminalHeight}px`;
           resizeCanvas();
         }
@@ -192,6 +195,11 @@
         list-style: none;
         font-size: 12px;
         margin: 5px 0;
+      }
+      .no-select {
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
       }
 
       .scrollbar-black::-webkit-scrollbar-track {
