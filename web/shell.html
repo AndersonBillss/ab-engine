@@ -70,6 +70,7 @@
       const ctx = canvas.getContext("2d");
 
       let minTerminalHeight = 100;
+      let minCanvasHeight = 100;
       var terminalElement = document.getElementById("terminal");
       var terminalTopBar = document.getElementById("terminal-top-bar");
       var outputElement = document.getElementById("output");
@@ -156,7 +157,8 @@
         mouseY = e.clientY;
         if (grabbedTerminal) {
           terminalHeight = window.innerHeight - mouseY;
-          if (terminalHeight <= minTerminalHeight) return;
+          if (terminalHeight <= minTerminalHeight || mouseY <= minCanvasHeight)
+            return;
           terminalElement.style.height = `${terminalHeight}px`;
           resizeCanvas();
         }
