@@ -211,7 +211,7 @@
         const height = outputElement.scrollHeight;
         const scroll = outputElement.scrollTop + outputElement.clientHeight;
 
-        const epsilon = 30;
+        const epsilon = 20;
         if (scroll + epsilon > height) followOutput = true;
         else followOutput = false;
       });
