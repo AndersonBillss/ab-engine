@@ -32,6 +32,10 @@
         >
           <div id="terminal-top-bar"></div>
         </div>
+        <div id="controls" style="background-color: #121212; display: flex">
+          <button onclick="clearOutput()">Clear</button>
+          <button onclick="scrollToBottom()">Go to bottom</button>
+        </div>
         <div
           class="scrollbar-black"
           id="output"
@@ -55,10 +59,11 @@
       var terminalElement = document.getElementById("terminal");
       var terminalTopBar = document.getElementById("terminal-top-bar");
       var outputElement = document.getElementById("output");
+      var controlsElement = document.getElementById("controls");
 
       const numBlocks = 50;
       const blockSize = 50;
-      const blocks = [];
+      let blocks = [];
       function addBlock() {
         const textNode = document.createTextNode("");
         outputElement.appendChild(textNode);
@@ -81,6 +86,13 @@
         currentLine++;
         if (currentLine > blockSize) addBlock();
         if (followOutput) scrollToBottom();
+      }
+      function clearOutput() {
+        let currentBlock = 0;
+        let currentLine = 0;
+        outputElement.replaceChildren();
+        blocks = [];
+        addBlock();
       }
 
       scrollToBottom();
@@ -155,10 +167,11 @@
           document.body.style.cursor = "n-resize";
           terminalTopBar.classList.add("terminal-grabbed");
           outputElement.classList.add("no-select");
+          controlsElement.classList.add("no-select");
         } else {
           document.body.style.cursor = "auto";
           terminalTopBar.classList.remove("terminal-grabbed");
-          outputElement.classList.remove("no-select");
+          controlsElement.classList.remove("no-select");
         }
         if (isNaN(terminalHeight)) {
           localStorage.setItem("terminalHeight", minTerminalHeight);
@@ -237,6 +250,16 @@
         font-size: 12px;
         margin: 5px 0;
       }
+      button {
+        padding: 5px 10px;
+        background-color: #00000000;
+        color: #aaa;
+      }
+      button:hover {
+        color: #d0d0d0;
+        cursor: pointer;
+      }
+
       .no-select {
         user-select: none;
         -webkit-user-select: none;
