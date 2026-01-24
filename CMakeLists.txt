@@ -19,7 +19,6 @@ if(EMSCRIPTEN)
     "--use-port=emdawnwebgpu"
     "-sASSERTIONS=1"
     "-sALLOW_MEMORY_GROWTH=1"
-    "-sASYNCIFY"
   )
 
 else()

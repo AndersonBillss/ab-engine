@@ -1,6 +1,5 @@
 #include <webgpu/webgpu.h>
 #include <iostream>
-#include <emscripten/emscripten.h>
 
 int main(int, char **)
 {
@@ -21,17 +20,6 @@ int main(int, char **)
   }
 
   std::cout << "WGPU instance: " << instance << std::endl;
-  for (size_t i = 0; i < 1000; i++)
-  {
-    std::cout << "NUMBER " << i << std::endl;
-  }
-
-  size_t safetyCap = 5000;
-  for (size_t i = 0; i < safetyCap; i++)
-  {
-    std::cout << "TEST" << i << std::endl;
-    emscripten_sleep(5);
-  }
 
   wgpuInstanceRelease(instance);
 
