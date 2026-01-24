@@ -16,9 +16,10 @@ if(EMSCRIPTEN)
 
   target_link_options(ab_engine PRIVATE
     "--shell-file" "../../web/shell.html"
-    "-sUSE_WEBGPU=1"
+    "--use-port=emdawnwebgpu"
     "-sASSERTIONS=1"
     "-sALLOW_MEMORY_GROWTH=1"
+    "-sASYNCIFY"
   )
 
 else()
