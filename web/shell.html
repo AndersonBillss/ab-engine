@@ -71,20 +71,25 @@
         currentLine = 0;
       }
 
+      let followOutput = true;
       let currentBlock = 0;
       let currentLine = 0;
       addBlock();
       function outputText(text) {
-        console.log(`${currentBlock + 1} blocks used`);
         let targetNode = blocks[currentBlock];
         targetNode.data += text + "\n";
         currentLine++;
         if (currentLine > blockSize) addBlock();
+        if (followOutput) scrollToBottom();
+      }
+
+      scrollToBottom();
+      function scrollToBottom() {
+        outputElement.scrollTop = outputElement.scrollHeight;
       }
 
       var Module = {
         print(...args) {
-          console.log(...args);
           outputText(args.join(" "));
         },
         locateFile(path) {
@@ -187,6 +192,15 @@
           terminalHeight = window.innerHeight - mouseY;
           setTerminalHeight(terminalHeight);
         }
+      });
+
+      outputElement.addEventListener("scroll", (e) => {
+        const height = outputElement.scrollHeight;
+        const scroll = outputElement.scrollTop + outputElement.clientHeight;
+
+        const epsilon = 30;
+        if (scroll + epsilon > height) followOutput = true;
+        else followOutput = false;
       });
 
       let controlIsHeld = false;
