@@ -78,7 +78,7 @@ def dawn_debug_setup():
 COMMANDS = {
     "build-engine-debug": build_engine_debug,
     "run-engine-debug": run_engine_debug,
-    "dawn-debug-build": dawn_debug_build,
+    "dawn-debug-setup": dawn_debug_setup,
 }
 
 
