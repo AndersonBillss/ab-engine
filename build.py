@@ -6,8 +6,8 @@ ENGINE_OUT = f"{BUILD_DIR}/engine"
 ENGINE_WEB_OUT = f"{BUILD_DIR}/web-engine"
 
 DAWN_SRC = "third_party/dawn"
-DAWN_OUT_DEBUG = f"{BUILD_DIR}dawn/debug"
-DAWN_INSTALL_DEBUG = f"{BUILD_DIR}_install/dawn/debug"
+DAWN_OUT_DEBUG = f"{BUILD_DIR}/dawn/debug"
+DAWN_INSTALL_DEBUG = f"{BUILD_DIR}/_install/dawn/debug"
 
 
 def cmd(args, *, working_directory=None):
