@@ -2,4 +2,4 @@
 setlocal
 call "%~dp0shared\load-msvc.bat" || exit /b 1
 
-make build-engine-debug
+python build.py build-engine-debug
