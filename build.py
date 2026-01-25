@@ -9,13 +9,16 @@ DAWN_SRC = "third_party/dawn"
 DAWN_OUT_DEBUG = f"{BUILD_DIR}/dawn/debug"
 DAWN_INSTALL_DEBUG = f"{BUILD_DIR}/_install/dawn/debug"
 
+EMCMAKE = "emcmake"
+if sys.platform == "win32":
+    EMCMAKE = "emcmake.bat"
 
 def cmd(args, *, working_directory=None):
     print(">>", " ".join(args))
     run(args, check=True, cwd=working_directory)
 
 
-# Native engine build commands
+# Native engine commands
 def build_engine_debug():
     cmd(
         [
@@ -37,6 +40,18 @@ def build_engine_debug():
 def run_engine_debug():
     build_engine_debug()
     cmd(["build/engine/ab_engine.exe"])
+
+
+# Web engine commands
+def build_web_debug():
+    cmd([EMCMAKE, "cmake", "-S", ".", "-B", ENGINE_WEB_OUT, "-G", "Ninja"])
+    cmd(["cmake", "--build", ENGINE_WEB_OUT])
+
+
+def run_web_debug():
+    build_web_debug()
+    print("Running engine at http://localhost:8000/ab_engine.html")
+    cmd([sys.executable, "-m", "http.server", "--directory", ENGINE_WEB_OUT, "8000"])
 
 
 # Dawn build commands
@@ -78,6 +93,8 @@ def dawn_debug_setup():
 COMMANDS = {
     "build-engine-debug": build_engine_debug,
     "run-engine-debug": run_engine_debug,
+    "build-web-debug": build_web_debug,
+    "run-web-debug": run_web_debug,
     "dawn-debug-setup": dawn_debug_setup,
 }
 

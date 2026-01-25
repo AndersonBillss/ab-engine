@@ -1,4 +1,4 @@
 @echo off
+call "%~dp0shared\enter-root-dir.bat" || exit /b 1
 
-call emcmake cmake -S . -B build/web-engine -G Ninja
-call cmake --build  build/web-engine --verbose
+python build.py run-web-debug
