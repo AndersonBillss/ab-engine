@@ -13,9 +13,10 @@ EMCMAKE = "emcmake"
 if sys.platform == "win32":
     EMCMAKE = "emcmake.bat"
 
+
 def cmd(args, *, working_directory=None):
     print(">>", " ".join(args))
-    run(args, check=True, cwd=working_directory)
+    return run(args, check=True, cwd=working_directory)
 
 
 # Native engine commands
@@ -34,35 +35,42 @@ def build_engine_debug():
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         ]
     )
-    cmd(["cmake", "--build", ENGINE_OUT])
+    return cmd(["cmake", "--build", ENGINE_OUT])
 
 
 def run_engine_debug():
     build_engine_debug()
-    cmd(["build/engine/ab_engine.exe"])
+    return cmd(["build/engine/ab_engine.exe"])
 
 
 # Web engine commands
 def build_web_debug():
     cmd([EMCMAKE, "cmake", "-S", ".", "-B", ENGINE_WEB_OUT, "-G", "Ninja"])
-    cmd(["cmake", "--build", ENGINE_WEB_OUT])
+    return cmd(["cmake", "--build", ENGINE_WEB_OUT])
 
 
 def run_web_debug():
     build_web_debug()
     print("Running engine at http://localhost:8000/ab_engine.html")
-    cmd([sys.executable, "-m", "http.server", "--directory", ENGINE_WEB_OUT, "8000"])
+    try:
+        result = cmd(
+            [sys.executable, "-m", "http.server", "--directory", ENGINE_WEB_OUT, "8000"]
+        )
+        return result
+    except KeyboardInterrupt:
+        print("Closing down server")
+        return None
 
 
 # Dawn build commands
 def dawn_deps():
-    cmd(
+    return cmd(
         [sys.executable, "tools/fetch_dawn_dependencies.py"], working_directory=DAWN_SRC
     )
 
 
 def dawn_debug_configure():
-    cmd(
+    return cmd(
         [
             "cmake",
             "-S",
@@ -82,12 +90,12 @@ def dawn_debug_configure():
 def dawn_debug_build():
     dawn_debug_configure()
     cmd(["cmake", "--build", DAWN_OUT_DEBUG])
-    cmd(["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG])
+    return cmd(["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG])
 
 
 def dawn_debug_setup():
     dawn_deps()
-    dawn_debug_build()
+    return dawn_debug_build()
 
 
 COMMANDS = {
