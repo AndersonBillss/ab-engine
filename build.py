@@ -21,20 +21,25 @@ def cmd(args, *, working_directory=None):
 
 # Native engine commands
 def build_engine_debug():
-    cmd(
-        [
-            "cmake",
-            "-S",
-            ".",
-            "-B",
-            ENGINE_OUT,
-            "-G",
-            "Ninja",
-            "-DCMAKE_C_COMPILER=cl",
-            "-DCMAKE_CXX_COMPILER=cl",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        ]
-    )
+    if (
+        cmd(
+            [
+                "cmake",
+                "-S",
+                ".",
+                "-B",
+                ENGINE_OUT,
+                "-G",
+                "Ninja",
+                "-DCMAKE_C_COMPILER=cl",
+                "-DCMAKE_CXX_COMPILER=cl",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            ]
+        )
+        != 0
+    ):
+        print("Engine build failed!")
+        exit(1)
     return cmd(["cmake", "--build", ENGINE_OUT])
 
 
@@ -45,7 +50,14 @@ def run_engine_debug():
 
 # Web engine commands
 def build_web_debug():
-    cmd([EMCMAKE, "cmake", "-S", ".", "-B", ENGINE_WEB_OUT, "-G", "Ninja"])
+    if (
+        cmd(
+            [EMCMAKE, "cmake", "-S", ".", "-B", ENGINE_WEB_OUT, "-G", "Ninja"]
+        ).returncode
+        != 0
+    ):
+        print("Web Build failed")
+        exit(1)
     return cmd(["cmake", "--build", ENGINE_WEB_OUT])
 
 
@@ -64,38 +76,55 @@ def run_web_debug():
 
 # Dawn build commands
 def dawn_deps():
-    return cmd(
-        [sys.executable, "tools/fetch_dawn_dependencies.py"], working_directory=DAWN_SRC
-    )
+    if (
+        cmd(
+            [sys.executable, "tools/fetch_dawn_dependencies.py"],
+            working_directory=DAWN_SRC,
+        )
+        != 0
+    ):
+        print("Failed building Dawn dependencies")
+        exit(0)
 
 
 def dawn_debug_configure():
-    return cmd(
-        [
-            "cmake",
-            "-S",
-            DAWN_SRC,
-            "-B",
-            DAWN_OUT_DEBUG,
-            "-G",
-            "Ninja",
-            "-DCMAKE_C_COMPILER=cl",
-            "-DCMAKE_CXX_COMPILER=cl",
-            "-DCMAKE_BUILD_TYPE=Debug",
-            "-DDAWN_ENABLE_INSTALL=ON",
-        ]
-    )
+    if (
+        cmd(
+            [
+                "cmake",
+                "-S",
+                DAWN_SRC,
+                "-B",
+                DAWN_OUT_DEBUG,
+                "-G",
+                "Ninja",
+                "-DCMAKE_C_COMPILER=cl",
+                "-DCMAKE_CXX_COMPILER=cl",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DDAWN_ENABLE_INSTALL=ON",
+            ]
+        )
+        != 0
+    ):
+        print("Failed to configure Dawn!")
+        exit(0)
 
 
 def dawn_debug_build():
     dawn_debug_configure()
-    cmd(["cmake", "--build", DAWN_OUT_DEBUG])
-    return cmd(["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG])
+    if cmd(["cmake", "--build", DAWN_OUT_DEBUG]):
+        print("Dawn debug setup failed!")
+        exit(1)
+    if cmd(["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG]):
+        print("Dawn debug setup failed!")
+        exit(1)
 
 
 def dawn_debug_setup():
-    dawn_deps()
-    return dawn_debug_build()
+    if dawn_deps().returncode != 0:
+        print("Dawn debug setup failed!")
+        exit(1)
+    dawn_debug_build()
 
 
 COMMANDS = {
