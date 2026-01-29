@@ -2,17 +2,9 @@
 #include <iostream>
 #include "requestAdapter.hpp"
 
-#ifndef WEBGPU_BACKEND_EMSCRIPTEN 
-#include "useD3D12.hpp"
-#endif // !WEBGPU_BACKEND_EMSCRIPTEN
-
 int main(int, char **)
 {
   std::cout << "Hello, WebGPU!!" << std::endl;
-
-  #ifndef WEBGPU_BACKEND_EMSCRIPTEN 
-    useD3D12();
-  #endif // !WEBGPU_BACKEND_EMSCRIPTEN
 
   WGPUInstanceDescriptor desc = {};
   desc.nextInChain = nullptr;

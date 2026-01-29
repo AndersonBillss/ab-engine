@@ -1,5 +1,4 @@
 #include "requestAdapter.hpp"
-#include <cassert>
 #include <iostream>
 
 #ifdef WEBGPU_BACKEND_EMSCRIPTEN
@@ -77,6 +76,7 @@ WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions 
     emscripten_sleep(100);
   }
 #else
+  adapterOpts.backendType = WGPUBackendType_D3D12;
   WGPURequestAdapterCallbackInfo info = {
       /* nextInChain */ nullptr,
       /* mode */ WGPUCallbackMode::WGPUCallbackMode_WaitAnyOnly,
@@ -90,6 +90,5 @@ WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions 
       info);
 #endif // WEBGPU_BACKEND_EMSCRIPTEN
 
-  assert(userData.requestEnded);
   return userData.adapter;
 }
