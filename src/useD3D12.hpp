@@ -1,0 +1,1 @@
+bool useD3D12();

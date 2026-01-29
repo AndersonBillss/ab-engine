@@ -21,25 +21,20 @@ def cmd(args, *, working_directory=None):
 
 # Native engine commands
 def build_engine_debug():
-    if (
-        cmd(
-            [
-                "cmake",
-                "-S",
-                ".",
-                "-B",
-                ENGINE_OUT,
-                "-G",
-                "Ninja",
-                "-DCMAKE_C_COMPILER=cl",
-                "-DCMAKE_CXX_COMPILER=cl",
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-            ]
-        )
-        != 0
-    ):
-        print("Engine build failed!")
-        exit(1)
+    cmd(
+        [
+            "cmake",
+            "-S",
+            ".",
+            "-B",
+            ENGINE_OUT,
+            "-G",
+            "Ninja",
+            "-DCMAKE_C_COMPILER=cl",
+            "-DCMAKE_CXX_COMPILER=cl",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        ]
+    )
     return cmd(["cmake", "--build", ENGINE_OUT])
 
 

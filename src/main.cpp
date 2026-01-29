@@ -1,8 +1,19 @@
 #include <webgpu/webgpu.h>
 #include <iostream>
+#include "requestAdapter.hpp"
+
+#ifndef WEBGPU_BACKEND_EMSCRIPTEN 
+#include "useD3D12.hpp"
+#endif // !WEBGPU_BACKEND_EMSCRIPTEN
 
 int main(int, char **)
 {
+  std::cout << "Hello, WebGPU!!" << std::endl;
+
+  #ifndef WEBGPU_BACKEND_EMSCRIPTEN 
+    useD3D12();
+  #endif // !WEBGPU_BACKEND_EMSCRIPTEN
+
   WGPUInstanceDescriptor desc = {};
   desc.nextInChain = nullptr;
 
@@ -19,7 +30,13 @@ int main(int, char **)
     return 1;
   }
 
-  std::cout << "WGPU instance: " << instance << std::endl;
+  std::cout << "Requesting adapter..." << std::endl;
+
+  WGPURequestAdapterOptions adapterOpts = {};
+  adapterOpts.nextInChain = nullptr;
+  WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
+
+  std::cout << "Got adapter: " << adapter << std::endl;
 
   wgpuInstanceRelease(instance);
 
