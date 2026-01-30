@@ -13,10 +13,12 @@ target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
 if(EMSCRIPTEN)
   set_target_properties(ab_engine PROPERTIES SUFFIX ".html")
   target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMSCRIPTEN)
-
+  
+  target_compile_options(ab_engine PRIVATE --use-port=emdawnwebgpu)
   target_link_options(ab_engine PRIVATE
     "--shell-file" "../../web/shell.html"
-    "-sUSE_WEBGPU=1"
+    "--use-port=emdawnwebgpu"
+    # "-sUSE_WEBGPU=1"
     "--closure=1"
     "-sASSERTIONS=1"
     "-sALLOW_MEMORY_GROWTH=1"

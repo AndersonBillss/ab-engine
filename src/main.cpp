@@ -2,19 +2,27 @@
 #include <iostream>
 #include "requestAdapter.hpp"
 
+void onAdapterRequested(WGPUAdapter adapter, void *pInstance)
+{
+  WGPUInstance &instance = *reinterpret_cast<WGPUInstance *>(pInstance);
+
+  std::cout << "Got adapter: " << adapter << std::endl;
+
+  wgpuInstanceRelease(instance);
+}
+
 int main(int, char **)
 {
   std::cout << "Hello, WebGPU!!" << std::endl;
 
   WGPUInstanceDescriptor desc = {};
   desc.nextInChain = nullptr;
+  desc.requiredFeatureCount = 1;
+  WGPUInstanceFeatureName features[] = {WGPUInstanceFeatureName_TimedWaitAny};
+  desc.requiredFeatures = features;
 
-// We create the instance using this descriptor
-#ifdef WEBGPU_BACKEND_EMSCRIPTEN
-  WGPUInstance instance = wgpuCreateInstance(nullptr);
-#else  //  WEBGPU_BACKEND_EMSCRIPTEN
+  // We create the instance using this descriptor
   WGPUInstance instance = wgpuCreateInstance(&desc);
-#endif //  WEBGPU_BACKEND_EMSCRIPTEN
 
   if (!instance)
   {
@@ -26,11 +34,6 @@ int main(int, char **)
 
   WGPURequestAdapterOptions adapterOpts = {};
   adapterOpts.nextInChain = nullptr;
-  WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
-
-  std::cout << "Got adapter: " << adapter << std::endl;
-
-  wgpuInstanceRelease(instance);
-
+  requestAdapterAsync(instance, &adapterOpts, onAdapterRequested, &instance);
   return 0;
 }

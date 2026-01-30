@@ -1,47 +1,4 @@
 #include "requestAdapter.hpp"
-
-#ifdef WEBGPU_BACKEND_EMSCRIPTEN
-#include <iostream>
-#include <emscripten/emscripten.h>
-
-WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions const *options)
-{
-    struct UserData
-    {
-        WGPUAdapter adapter = nullptr;
-        bool requestEnded = false;
-    };
-    UserData userData;
-
-    auto onAdapterRequestEnded = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, char const *message, void *pUserData)
-    {
-        UserData &userData = *reinterpret_cast<UserData *>(pUserData);
-        if (status == WGPURequestAdapterStatus_Success)
-        {
-            userData.adapter = adapter;
-        }
-        else
-        {
-            std::cout << "Could not get WebGPU adapter: " << message << std::endl;
-        }
-        userData.requestEnded = true;
-    };
-
-    wgpuInstanceRequestAdapter(
-        instance,
-        options,
-        onAdapterRequestEnded,
-        (void *)&userData);
-
-    while (!userData.requestEnded)
-    {
-        emscripten_sleep(100);
-    }
-
-    return userData.adapter;
-}
-
-#else // WEBGPU_BACKEND_EMSCRIPTEN
 #include <iostream>
 
 std::ostream &operator<<(std::ostream &os, WGPUStringView stringView)
@@ -53,35 +10,44 @@ std::ostream &operator<<(std::ostream &os, WGPUStringView stringView)
     return os;
 }
 
-WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions const *options)
+void requestAdapterAsync(
+    WGPUInstance instance,
+    WGPURequestAdapterOptions const *options,
+    AdapterCallback cb,
+    void *data)
 {
     struct UserData
     {
-        WGPUAdapter adapter = nullptr;
-        bool requestEnded = false;
+        bool done;
+        AdapterCallback cb;
+        void *data;
     };
     UserData userData;
+    userData.cb = cb;
+    userData.data = data;
 
     auto onAdapterRequestEnded = [](
                                      WGPURequestAdapterStatus status,
                                      WGPUAdapter adapter,
                                      WGPUStringView message,
                                      void *pUserData,
-                                     void *userData2)
+                                     void *_)
     {
         UserData &userData = *reinterpret_cast<UserData *>(pUserData);
         if (status == WGPURequestAdapterStatus_Success)
         {
-            userData.adapter = adapter;
+            userData.done = true;
+            userData.cb(adapter, userData.data);
         }
         else
         {
             std::cout << "Could not get WebGPU adapter: " << message << std::endl;
         }
-        userData.requestEnded = true;
     };
     WGPURequestAdapterOptions adapterOpts = {};
+#ifndef WEBGPU_BACKEND_EMSCRIPTEN
     adapterOpts.backendType = WGPUBackendType_D3D12;
+#endif // !WEBGPU_BACKEND_EMSCRIPTEN
     WGPURequestAdapterCallbackInfo info = {
         /* nextInChain */ nullptr,
         /* mode */ WGPUCallbackMode::WGPUCallbackMode_WaitAnyOnly,
@@ -89,11 +55,11 @@ WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions 
         /* userdata 1 */ &userData,
         /* userdata 2 */ nullptr,
     };
-    wgpuInstanceRequestAdapter(
+    WGPUFuture f = wgpuInstanceRequestAdapter(
         instance,
         &adapterOpts,
         info);
+    WGPUFutureWaitInfo waitInfo = {f, 0};
 
-    return userData.adapter;
+    wgpuInstanceWaitAny(instance, 1, &waitInfo, UINT64_MAX);
 }
-#endif //  WEBGPU_BACKEND_EMSCRIPTEN

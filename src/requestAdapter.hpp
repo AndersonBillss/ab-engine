@@ -1,3 +1,9 @@
 #include <webgpu/webgpu.h>
 
-WGPUAdapter requestAdapterSync(WGPUInstance instance, WGPURequestAdapterOptions const *options);
+using AdapterCallback = void (*)(WGPUAdapter adapter, void *userData);
+
+void requestAdapterAsync(
+    WGPUInstance instance,
+    WGPURequestAdapterOptions const *options,
+    AdapterCallback cb,
+    void *userData);
