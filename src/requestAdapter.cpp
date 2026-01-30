@@ -10,34 +10,23 @@ std::ostream &operator<<(std::ostream &os, WGPUStringView stringView)
     return os;
 }
 
-void requestAdapterAsync(
+WGPUAdapter requestAdapterSync(
     WGPUInstance instance,
-    WGPURequestAdapterOptions const *options,
-    AdapterCallback cb,
-    void *data)
+    WGPURequestAdapterOptions const *options)
 {
-    struct UserData
-    {
-        bool done;
-        AdapterCallback cb;
-        void *data;
-    };
-    UserData userData;
-    userData.cb = cb;
-    userData.data = data;
+    WGPUAdapter adapter = nullptr;
 
     auto onAdapterRequestEnded = [](
                                      WGPURequestAdapterStatus status,
                                      WGPUAdapter adapter,
                                      WGPUStringView message,
-                                     void *pUserData,
+                                     void *pAdapter,
                                      void *_)
     {
-        UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+        WGPUAdapter *userAdapter = reinterpret_cast<WGPUAdapter *>(pAdapter);
         if (status == WGPURequestAdapterStatus_Success)
         {
-            userData.done = true;
-            userData.cb(adapter, userData.data);
+            *userAdapter = adapter;
         }
         else
         {
@@ -52,7 +41,7 @@ void requestAdapterAsync(
         /* nextInChain */ nullptr,
         /* mode */ WGPUCallbackMode::WGPUCallbackMode_WaitAnyOnly,
         /* callback */ onAdapterRequestEnded,
-        /* userdata 1 */ &userData,
+        /* userdata 1 */ &adapter,
         /* userdata 2 */ nullptr,
     };
     WGPUFuture f = wgpuInstanceRequestAdapter(
@@ -62,4 +51,5 @@ void requestAdapterAsync(
     WGPUFutureWaitInfo waitInfo = {f, 0};
 
     wgpuInstanceWaitAny(instance, 1, &waitInfo, UINT64_MAX);
+    return adapter;
 }

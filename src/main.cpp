@@ -34,6 +34,8 @@ int main(int, char **)
 
   WGPURequestAdapterOptions adapterOpts = {};
   adapterOpts.nextInChain = nullptr;
-  requestAdapterAsync(instance, &adapterOpts, onAdapterRequested, &instance);
+  WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
+  std::cout << "Got adapter: " << adapter << std::endl;
+  wgpuInstanceRelease(instance);
   return 0;
 }
