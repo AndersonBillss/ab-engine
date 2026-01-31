@@ -36,6 +36,20 @@ int main(int, char **)
   adapterOpts.nextInChain = nullptr;
   WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
   std::cout << "Got adapter: " << adapter << std::endl;
+
+  WGPULimits supportedLimits = {};
+  supportedLimits.nextInChain = nullptr;
+
+  bool success = wgpuAdapterGetLimits(adapter, &supportedLimits) == WGPUStatus_Success;
+
+  if (success)
+  {
+    std::cout << "Adapter limits:" << std::endl;
+    std::cout << " - maxTextureDimension1D: " << supportedLimits.maxTextureDimension1D << std::endl;
+    std::cout << " - maxTextureDimension2D: " << supportedLimits.maxTextureDimension2D << std::endl;
+    std::cout << " - maxTextureDimension3D: " << supportedLimits.maxTextureDimension3D << std::endl;
+    std::cout << " - maxTextureArrayLayers: " << supportedLimits.maxTextureArrayLayers << std::endl;
+  }
   wgpuInstanceRelease(instance);
   return 0;
 }
