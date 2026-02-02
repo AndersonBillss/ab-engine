@@ -1,7 +1,7 @@
-#include <webgpu/webgpu.h>
 #include <iostream>
 #include <unordered_map>
 #include "requestAdapter.hpp"
+#include "printStringView.hpp"
 
 void onAdapterRequested(WGPUAdapter adapter, void *pInstance)
 {
@@ -45,7 +45,7 @@ int main(int, char **)
 
   if (success)
   {
-    std::cout << "Adapter limits:" << std::endl;
+    std::cout << "\nAdapter limits:" << std::endl;
     std::cout << " - maxTextureDimension1D: " << supportedLimits.maxTextureDimension1D << std::endl;
     std::cout << " - maxTextureDimension2D: " << supportedLimits.maxTextureDimension2D << std::endl;
     std::cout << " - maxTextureDimension3D: " << supportedLimits.maxTextureDimension3D << std::endl;
@@ -143,7 +143,7 @@ int main(int, char **)
   WGPUSupportedFeatures supportedFeatures;
   wgpuAdapterGetFeatures(adapter, &supportedFeatures);
 
-  std::cout << "Supported features:" << std::endl;
+  std::cout << "\nSupported features:" << std::endl;
   for (size_t i = 0; i < supportedFeatures.featureCount; i++)
   {
     std::cout << " - ";
@@ -158,6 +158,36 @@ int main(int, char **)
       std::cout << it->second << std::endl;
     }
   }
+
+  delete[] supportedFeatures.features;
+
+  WGPUAdapterInfo adapterInfo;
+  adapterInfo.nextInChain = nullptr;
+  WGPUStatus adapterInfoResult = wgpuAdapterGetInfo(adapter, &adapterInfo);
+
+  std::cout << "\nAdapter properties:" << std::endl;
+  std::cout << " - vendorID: " << adapterInfo.vendorID << std::endl;
+  if (adapterInfo.vendor.length)
+  {
+    std::cout << " - vendor: " << adapterInfo.vendor << std::endl;
+  }
+  if (adapterInfo.architecture.length)
+  {
+    std::cout << " - architecture: " << adapterInfo.architecture << std::endl;
+  }
+  std::cout << " - deviceID: " << adapterInfo.deviceID << std::endl;
+  if (adapterInfo.device.length)
+  {
+    std::cout << " - device: " << adapterInfo.device << std::endl;
+  }
+  if (adapterInfo.description.length)
+  {
+    std::cout << " - description: " << adapterInfo.description << std::endl;
+  }
+  std::cout << std::hex;
+  std::cout << " - adapterType: 0x" << adapterInfo.adapterType << std::endl;
+  std::cout << " - backendType: 0x" << adapterInfo.backendType << std::endl;
+  std::cout << std::dec; // Restore decimal numbers
 
   wgpuInstanceRelease(instance);
   return 0;

@@ -14,7 +14,7 @@ if(EMSCRIPTEN)
   set_target_properties(ab_engine PROPERTIES SUFFIX ".html")
   target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMSCRIPTEN)
   
-  target_compile_options(ab_engine PRIVATE --use-port=emdawnwebgpu)
+  target_compile_options(ab_engine PRIVATE "--use-port=emdawnwebgpu")
   target_link_options(ab_engine PRIVATE
     "--shell-file" "../../web/shell.html"
     "--use-port=emdawnwebgpu"
