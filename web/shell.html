@@ -189,6 +189,7 @@
           height = window.innerHeight - minCanvasHeight;
         terminalElement.style.height = `${height}px`;
         resizeCanvas();
+        if (followOutput) scrollToBottom();
       }
 
       let mouseY = 0;
