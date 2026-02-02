@@ -171,6 +171,7 @@
         } else {
           document.body.style.cursor = "auto";
           terminalTopBar.classList.remove("terminal-grabbed");
+          outputElement.classList.remove("no-select");
           controlsElement.classList.remove("no-select");
         }
         if (isNaN(terminalHeight)) {
