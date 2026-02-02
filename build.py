@@ -21,20 +21,23 @@ def cmd(args, *, working_directory=None):
 
 # Native engine commands
 def build_engine_debug():
-    if cmd(
-        [
-            "cmake",
-            "-S",
-            ".",
-            "-B",
-            ENGINE_OUT,
-            "-G",
-            "Ninja",
-            "-DCMAKE_C_COMPILER=cl",
-            "-DCMAKE_CXX_COMPILER=cl",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-        ]
-    ).returncode != 0:
+    if (
+        cmd(
+            [
+                "cmake",
+                "-S",
+                ".",
+                "-B",
+                ENGINE_OUT,
+                "-G",
+                "Ninja",
+                "-DCMAKE_C_COMPILER=cl",
+                "-DCMAKE_CXX_COMPILER=cl",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            ]
+        ).returncode
+        != 0
+    ):
         print("Native Build failed")
         exit(1)
 
@@ -100,6 +103,7 @@ def dawn_debug_configure():
                 "-DCMAKE_CXX_COMPILER=cl",
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DDAWN_ENABLE_INSTALL=ON",
+                "-DDAWN_FORCE_SYSTEM_COMPONENT_LOAD=ON",
             ]
         ).returncode
         != 0
@@ -113,7 +117,12 @@ def dawn_debug_build():
     if cmd(["cmake", "--build", DAWN_OUT_DEBUG]).returncode != 0:
         print("Dawn debug setup failed!")
         exit(1)
-    if cmd(["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG]).returncode != 0:
+    if (
+        cmd(
+            ["cmake", "--install", DAWN_OUT_DEBUG, "--prefix", DAWN_INSTALL_DEBUG]
+        ).returncode
+        != 0
+    ):
         print("Dawn debug setup failed!")
         exit(1)
 

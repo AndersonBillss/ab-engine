@@ -1,15 +1,13 @@
 #include <iostream>
 #include <unordered_map>
 #include "requestAdapter.hpp"
+#include "requestDevice.hpp"
 #include "printStringView.hpp"
 
-void onAdapterRequested(WGPUAdapter adapter, void *pInstance)
+void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message, void *_, void *__)
 {
-  WGPUInstance &instance = *reinterpret_cast<WGPUInstance *>(pInstance);
-
-  std::cout << "Got adapter: " << adapter << std::endl;
-
-  wgpuInstanceRelease(instance);
+  if (reason != WGPUDeviceLostReason::WGPUDeviceLostReason_Destroyed)
+    std::cout << "WGPU device lost: " << message << std::endl;
 }
 
 int main(int, char **)
@@ -18,8 +16,8 @@ int main(int, char **)
 
   WGPUInstanceDescriptor desc = {};
   desc.nextInChain = nullptr;
-  desc.requiredFeatureCount = 1;
   WGPUInstanceFeatureName features[] = {WGPUInstanceFeatureName_TimedWaitAny};
+  desc.requiredFeatureCount = 1;
   desc.requiredFeatures = features;
 
   // We create the instance using this descriptor
@@ -189,6 +187,22 @@ int main(int, char **)
   std::cout << " - backendType: 0x" << adapterInfo.backendType << std::endl;
   std::cout << std::dec; // Restore decimal numbers
 
+  std::cout << "\nRequesting device..." << std::endl;
+  WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
+  WGPUDeviceLostCallbackInfo deviceLostCb = {
+      /* nextInChain */ nullptr,
+      /* mode */ WGPUCallbackMode_AllowSpontaneous,
+      /* callback */ onDeviceLost,
+      /* userdata1 */ nullptr,
+      /* userdata2 */ nullptr,
+  };
+  deviceDescriptor.deviceLostCallbackInfo = deviceLostCb;
+
+  WGPUDevice device = requestDeviceSync(instance, adapter, &deviceDescriptor);
+  std::cout << "Got device: " << device << std::endl;
+
+  wgpuDeviceRelease(device);
+  wgpuAdapterRelease(adapter);
   wgpuInstanceRelease(instance);
   return 0;
 }
