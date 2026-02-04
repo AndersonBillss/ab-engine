@@ -10,6 +10,20 @@ void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStr
     std::cout << "WGPU device lost: " << message << std::endl;
 }
 
+void inspectDevice(WGPUDevice &device)
+{
+  WGPULimits limits = WGPU_LIMITS_INIT;
+  bool success = wgpuDeviceGetLimits(device, &limits) == WGPUStatus_Success;
+  if (success)
+  {
+    std::cout << "\nDevice limits:" << std::endl;
+    std::cout << " - maxTextureDimension1D: " << limits.maxTextureDimension1D << std::endl;
+    std::cout << " - maxTextureDimension2D: " << limits.maxTextureDimension2D << std::endl;
+    std::cout << " - maxTextureDimension3D: " << limits.maxTextureDimension3D << std::endl;
+    std::cout << " - maxTextureArrayLayers: " << limits.maxTextureArrayLayers << std::endl;
+  }
+}
+
 int main(int, char **)
 {
   std::cout << "Hello, WebGPU!!" << std::endl;
@@ -200,6 +214,7 @@ int main(int, char **)
 
   WGPUDevice device = requestDeviceSync(instance, adapter, &deviceDescriptor);
   std::cout << "Got device: " << device << std::endl;
+  inspectDevice(device);
 
   wgpuDeviceRelease(device);
   wgpuAdapterRelease(adapter);
