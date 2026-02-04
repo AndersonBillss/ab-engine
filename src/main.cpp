@@ -29,32 +29,8 @@ void inspectDevice(WGPUDevice &device)
   }
 }
 
-int main(int, char **)
+void inspectAdapter(WGPUAdapter &adapter)
 {
-  std::cout << "Hello, WebGPU!!" << std::endl;
-
-  WGPUInstanceDescriptor desc = {};
-  desc.nextInChain = nullptr;
-  WGPUInstanceFeatureName features[] = {WGPUInstanceFeatureName_TimedWaitAny};
-  desc.requiredFeatureCount = 1;
-  desc.requiredFeatures = features;
-
-  // We create the instance using this descriptor
-  WGPUInstance instance = wgpuCreateInstance(&desc);
-
-  if (!instance)
-  {
-    std::cerr << "Could not initialize WebGPU!" << std::endl;
-    return 1;
-  }
-
-  std::cout << "Requesting adapter..." << std::endl;
-
-  WGPURequestAdapterOptions adapterOpts = {};
-  adapterOpts.nextInChain = nullptr;
-  WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
-  std::cout << "Got adapter: " << adapter << std::endl;
-
   WGPULimits supportedLimits = {};
   supportedLimits.nextInChain = nullptr;
 
@@ -168,7 +144,6 @@ int main(int, char **)
     if (it == featureToString.end())
     {
       std::cout << "Unknown feature: " << supportedFeatures.features[i] << std::endl;
-      ;
     }
     else
     {
@@ -178,8 +153,7 @@ int main(int, char **)
 
   delete[] supportedFeatures.features;
 
-  WGPUAdapterInfo adapterInfo;
-  adapterInfo.nextInChain = nullptr;
+  WGPUAdapterInfo adapterInfo = WGPU_ADAPTER_INFO_INIT;
   WGPUStatus adapterInfoResult = wgpuAdapterGetInfo(adapter, &adapterInfo);
 
   std::cout << "\nAdapter properties:" << std::endl;
@@ -205,6 +179,35 @@ int main(int, char **)
   std::cout << " - adapterType: 0x" << adapterInfo.adapterType << std::endl;
   std::cout << " - backendType: 0x" << adapterInfo.backendType << std::endl;
   std::cout << std::dec; // Restore decimal numbers
+}
+
+
+int main(int, char **)
+{
+  std::cout << "Hello, WebGPU!!" << std::endl;
+
+  WGPUInstanceDescriptor desc = {};
+  desc.nextInChain = nullptr;
+  WGPUInstanceFeatureName features[] = {WGPUInstanceFeatureName_TimedWaitAny};
+  desc.requiredFeatureCount = 1;
+  desc.requiredFeatures = features;
+
+  // We create the instance using this descriptor
+  WGPUInstance instance = wgpuCreateInstance(&desc);
+
+  if (!instance)
+  {
+    std::cerr << "Could not initialize WebGPU!" << std::endl;
+    return 1;
+  }
+
+  std::cout << "Requesting adapter..." << std::endl;
+
+  WGPURequestAdapterOptions adapterOpts = {};
+  adapterOpts.nextInChain = nullptr;
+  WGPUAdapter adapter = requestAdapterSync(instance, &adapterOpts);
+  std::cout << "Got adapter: " << adapter << std::endl;
+  inspectAdapter(adapter);
 
   std::cout << "\nRequesting device..." << std::endl;
   WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
