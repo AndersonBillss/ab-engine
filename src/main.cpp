@@ -4,13 +4,13 @@
 #include "requestDevice.hpp"
 #include "printStringView.hpp"
 
-void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message, void *_, void *__)
+void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message, void *, void *)
 {
   if (reason != WGPUDeviceLostReason::WGPUDeviceLostReason_Destroyed)
     std::cout << "WGPU device lost: " << message << std::endl;
 }
 
-void onDeviceUncapturedError(WGPUDevice const *device, WGPUErrorType type, WGPUStringView message, void *_, void *__)
+void onDeviceUncapturedError(WGPUDevice const *device, WGPUErrorType type, WGPUStringView message, void *, void *)
 {
   std::cout << "WGPU device error: " << message << std::endl;
 }
@@ -181,7 +181,6 @@ void inspectAdapter(WGPUAdapter &adapter)
   std::cout << std::dec; // Restore decimal numbers
 }
 
-
 int main(int, char **)
 {
   std::cout << "Hello, WebGPU!!" << std::endl;
@@ -232,6 +231,32 @@ int main(int, char **)
   std::cout << "Got device: " << device << std::endl;
   inspectDevice(device);
 
+  WGPUQueue queue = wgpuDeviceGetQueue(device);
+
+  WGPUQueueWorkDoneCallback onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, WGPUStringView message, void *, void *)
+  {
+    std::cout << "Queued work finished with status: " << status << std::endl;
+    std::cout << message << std::endl;
+  };
+
+  WGPUQueueWorkDoneCallbackInfo workQueueWorkDoneCb = {
+      /* nextInChain */ nullptr,
+      /* mode */ WGPUCallbackMode_AllowSpontaneous,
+      /* callback */ onQueueWorkDone,
+      /* userdata1 */ nullptr,
+      /* userdata2 */ nullptr};
+  wgpuQueueOnSubmittedWorkDone(queue, workQueueWorkDoneCb);
+
+  WGPUCommandEncoderDescriptor encoderDesc = WGPU_COMMAND_ENCODER_DESCRIPTOR_INIT;
+  WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &encoderDesc);
+
+  std::string debugMarkerData = "Do one thing";
+  WGPUStringView wgpuMarkerData = {
+      /* data */ debugMarkerData.c_str(),
+      /* length */ debugMarkerData.size()};
+  wgpuCommandEncoderInsertDebugMarker(encoder, wgpuMarkerData);
+
+  wgpuQueueRelease(queue);
   wgpuDeviceRelease(device);
   wgpuAdapterRelease(adapter);
   wgpuInstanceRelease(instance);
