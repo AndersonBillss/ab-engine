@@ -10,6 +10,11 @@ void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStr
     std::cout << "WGPU device lost: " << message << std::endl;
 }
 
+void onDeviceUncapturedError(WGPUDevice const *device, WGPUErrorType type, WGPUStringView message, void *_, void *__)
+{
+  std::cout << "WGPU device error: " << message << std::endl;
+}
+
 void inspectDevice(WGPUDevice &device)
 {
   WGPULimits limits = WGPU_LIMITS_INIT;
@@ -211,6 +216,14 @@ int main(int, char **)
       /* userdata2 */ nullptr,
   };
   deviceDescriptor.deviceLostCallbackInfo = deviceLostCb;
+
+  WGPUUncapturedErrorCallbackInfo uncapturedCb = {
+      /* nextInChain */ nullptr,
+      /* callback */ onDeviceUncapturedError,
+      /* userdata1 */ nullptr,
+      /* userdata2 */ nullptr,
+  };
+  deviceDescriptor.uncapturedErrorCallbackInfo = uncapturedCb;
 
   WGPUDevice device = requestDeviceSync(instance, adapter, &deviceDescriptor);
   std::cout << "Got device: " << device << std::endl;
