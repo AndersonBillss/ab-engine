@@ -9,6 +9,7 @@ public:
 
     virtual void pollEvents() = 0;
     virtual bool shouldClose() = 0;
+    virtual bool isInitialized() = 0;
 
 protected:
     virtual void init(int width, int height, const std::string title) = 0;
