@@ -235,7 +235,19 @@ int main(int, char **)
 
   WGPUQueueWorkDoneCallback onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, WGPUStringView message, void *, void *)
   {
-    std::cout << "Queued work finished with status: " << status << std::endl;
+    std::unordered_map<WGPUQueueWorkDoneStatus, std::string> statusToString = {
+        {WGPUQueueWorkDoneStatus_Success, "WGPUQueueWorkDoneStatus_Success"},
+        {WGPUQueueWorkDoneStatus_CallbackCancelled, "WGPUQueueWorkDoneStatus_CallbackCancelled"},
+        {WGPUQueueWorkDoneStatus_Error, "WGPUQueueWorkDoneStatus_Error"},
+        {WGPUQueueWorkDoneStatus_Force32, "WGPUQueueWorkDoneStatus_Force32"},
+    };
+    std::string stringifiedStatus = "Unknown";
+    auto it = statusToString.find(status);
+    if (it != statusToString.end())
+    {
+      stringifiedStatus = it->second;
+    }
+    std::cout << "Queued work finished with status: " << stringifiedStatus << std::endl;
     std::cout << message << std::endl;
   };
 
@@ -250,11 +262,19 @@ int main(int, char **)
   WGPUCommandEncoderDescriptor encoderDesc = WGPU_COMMAND_ENCODER_DESCRIPTOR_INIT;
   WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &encoderDesc);
 
-  std::string debugMarkerData = "Do one thing";
+  std::string debugMarkerData = "Do something";
   WGPUStringView wgpuMarkerData = {
       /* data */ debugMarkerData.c_str(),
       /* length */ debugMarkerData.size()};
   wgpuCommandEncoderInsertDebugMarker(encoder, wgpuMarkerData);
+
+  WGPUCommandBufferDescriptor cmdBufferDescriptor = WGPU_COMMAND_BUFFER_DESCRIPTOR_INIT;
+  WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, &cmdBufferDescriptor);
+  wgpuCommandEncoderRelease(encoder);
+  std::cout << "Submitting command..." << std::endl;
+  wgpuQueueSubmit(queue, 1, &command);
+  wgpuCommandBufferRelease(command);
+  std::cout << "Command submitted." << std::endl;
 
   wgpuQueueRelease(queue);
   wgpuDeviceRelease(device);
