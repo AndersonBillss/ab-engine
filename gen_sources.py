@@ -10,7 +10,8 @@ def gen_sources():
     for root, dirs, files in os.walk("src"):
         for file in files:
             if file.endswith(".cpp"):
-                src_files += [os.path.join(root, file)]
+                filepath = os.path.join(root, file).replace("\\", "/")
+                src_files += [filepath]
 
     concat_files = ""
     for i, filepath in enumerate(src_files):

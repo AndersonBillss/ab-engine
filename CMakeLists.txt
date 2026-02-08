@@ -1,14 +1,12 @@
+include(sources.cmake)
+
 cmake_minimum_required(VERSION 3.21)
 project(AbEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
-  "${CMAKE_SOURCE_DIR}/src/*.cpp"
-)
-
-add_executable(ab_engine ${SRC_FILES})
+add_executable(ab_engine ${AB_ENGINE_SOURCES})
 
 target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
 
