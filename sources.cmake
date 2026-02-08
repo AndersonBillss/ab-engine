@@ -4,7 +4,11 @@ set(AB_ENGINE_SOURCES
   src/printStringView.cpp
   src/requestAdapter.cpp
   src/requestDevice.cpp
-  src/window/canvasWindow.cpp
-  src/window/glfwWindow.cpp
   src/window/windowFactory.cpp
+)
+set(AB_ENGINE_SOURCES_NATIVE
+  src/window/NATIVE_glfwWindow.cpp
+)
+set(AB_ENGINE_SOURCES_WEB
+  src/window/WEB_canvasWindow.cpp
 )

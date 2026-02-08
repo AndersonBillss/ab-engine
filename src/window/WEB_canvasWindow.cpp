@@ -1,4 +1,4 @@
-#include "canvasWindow.hpp"
+#include "WEB_canvasWindow.hpp"
 #include <emscripten/emscripten.h>
 
 CanvasWindow::~CanvasWindow()
