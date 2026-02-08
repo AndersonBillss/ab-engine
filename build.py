@@ -22,6 +22,7 @@ def cmd(args, *, working_directory=None):
 
 # Native engine commands
 def build_engine_debug():
+    gen_sources()
     if (
         cmd(
             [
@@ -52,6 +53,7 @@ def run_engine_debug():
 
 # Web engine commands
 def build_web_debug():
+    gen_sources()
     if (
         cmd(
             [EMCMAKE, "cmake", "-S", ".", "-B", ENGINE_WEB_OUT, "-G", "Ninja"]
