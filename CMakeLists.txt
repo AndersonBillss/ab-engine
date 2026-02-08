@@ -11,6 +11,9 @@ add_executable(ab_engine ${AB_ENGINE_SOURCES})
 target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
 
 if(EMSCRIPTEN)
+  target_sources(ab_engine PRIVATE 
+    ${AB_ENGINE_SOURCES_WEB}
+  )
   set_target_properties(ab_engine PROPERTIES SUFFIX ".html")
   target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMSCRIPTEN)
   
@@ -25,6 +28,9 @@ if(EMSCRIPTEN)
   )
 
 else()
+  target_sources(ab_engine PRIVATE 
+    ${AB_ENGINE_SOURCES_NATIVE}
+  )
   add_subdirectory(third_party/dawn/third_party/glfw)
 
   list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_install/dawn/debug")
