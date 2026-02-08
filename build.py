@@ -1,5 +1,6 @@
 from subprocess import run
 import sys
+from gen_sources import gen_sources
 
 BUILD_DIR = "build"
 ENGINE_OUT = f"{BUILD_DIR}/engine"
@@ -138,6 +139,7 @@ COMMANDS = {
     "build-web-debug": build_web_debug,
     "run-web-debug": run_web_debug,
     "dawn-debug-setup": dawn_debug_setup,
+    "gen-sources": gen_sources,
 }
 
 
