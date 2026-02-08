@@ -277,20 +277,22 @@ int main(int, char **)
   wgpuCommandBufferRelease(command);
   std::cout << "Command submitted." << std::endl;
 
-  auto window = WindowFactory::createWindow("My Window");
-  if (!window->isInitialized())
+  Window::ExitCallback onExit = [queue, device, adapter, instance]()
   {
-    std::cerr << "Could not initialize window!" << std::endl;
-    return 1;
-  }
-  while (!window->shouldClose())
-  {
-    window->pollEvents();
-  }
+    wgpuQueueRelease(queue);
+    wgpuDeviceRelease(device);
+    wgpuAdapterRelease(adapter);
+    wgpuInstanceRelease(instance);
+  };
 
-  wgpuQueueRelease(queue);
-  wgpuDeviceRelease(device);
-  wgpuAdapterRelease(adapter);
-  wgpuInstanceRelease(instance);
+  Window::TickCallback onTick = [](double dt){
+    std::cout << "DeltaTime: " << dt << std::endl;
+  };
+
+  auto window = WindowFactory::createWindow("My Window");
+  window->setOnTick(onTick);
+  window->setOnExit(onExit);
+  window->run();
+
   return 0;
 }

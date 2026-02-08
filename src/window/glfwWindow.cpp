@@ -1,5 +1,6 @@
 #include "glfwWindow.hpp"
 #include <iostream>
+#include <chrono>
 
 GlfwWindow::~GlfwWindow()
 {
@@ -21,14 +22,27 @@ GlfwWindow::GlfwWindow(int width, int height, std::string title) : Window(width,
 
 GlfwWindow::GlfwWindow(std::string title) : GlfwWindow(default_width, default_height, title) {}
 
-void GlfwWindow::pollEvents()
+void GlfwWindow::setOnTick(Window::TickCallback cb)
 {
-    glfwPollEvents();
+    this->_onTick = cb;
+}
+void GlfwWindow::setOnExit(Window::ExitCallback cb)
+{
+    this->_onExit = cb;
 }
 
-bool GlfwWindow::shouldClose()
+void GlfwWindow::run()
 {
-    return glfwWindowShouldClose(_win);
+    std::chrono::time_point last = std::chrono::steady_clock::now();
+    while (!glfwWindowShouldClose(_win))
+    {
+        std::chrono::time_point now = std::chrono::steady_clock::now();
+        double dt = (now - last).count();
+        last = now;
+        glfwPollEvents();
+        this->_onTick(dt);
+    }
+    this->_onExit();
 }
 
 bool GlfwWindow::isInitialized()
