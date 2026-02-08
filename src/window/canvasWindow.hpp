@@ -1,19 +1,14 @@
+#pragma once
 #include "window.hpp"
 #include <string>
 
 class CanvasWindow : public Window
 {
 public:
+    ~CanvasWindow() override;
+    CanvasWindow(int width, int height, std::string title);
+    CanvasWindow(std::string title);
     void pollEvents() override;
     bool shouldClose() override;
     bool isInitialized() override;
-
-protected:
-    void init(int width, int height, const std::string title) override;
-    void destroy() override;
-
-private:
-    int _width;
-    int _height;
-    std::string _title;
 };

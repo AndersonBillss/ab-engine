@@ -3,9 +3,7 @@
 #include "requestAdapter.hpp"
 #include "requestDevice.hpp"
 #include "printStringView.hpp"
-#ifndef __EMSCRIPTEN__
-#include <GLFW/glfw3.h>
-#endif // not __EMSCRIPTEN__
+#include "window/windowFactory.hpp"
 
 void onDeviceLost(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message, void *, void *)
 {
@@ -279,26 +277,16 @@ int main(int, char **)
   wgpuCommandBufferRelease(command);
   std::cout << "Command submitted." << std::endl;
 
-#ifndef __EMSCRIPTEN__
-  if (!glfwInit())
-  {
-    std::cerr << "Could not initialize GLFW!" << std::endl;
-    return 1;
-  }
-  GLFWwindow *window = glfwCreateWindow(640, 480, "GLFW Window", nullptr, nullptr);
-
-  if (!window)
-  {
-    std::cerr << "Could not open window!" << std::endl;
-    glfwTerminate();
-    return 1;
-  }
-  while (!glfwWindowShouldClose(window))
-  {
-    glfwPollEvents();
-  }
-  glfwTerminate();
-#endif // not __EMSCRIPTEN__
+  auto window = WindowFactory::createWindow("My Window");
+  // if (!window->isInitialized())
+  // {
+  //   std::cerr << "Could not initialize window!" << std::endl;
+  //   return 1;
+  // }
+  // while (!window->shouldClose())
+  // {
+  //   window->pollEvents();
+  // }
 
   wgpuQueueRelease(queue);
   wgpuDeviceRelease(device);

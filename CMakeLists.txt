@@ -4,7 +4,9 @@ project(AbEngine LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB SRC_FILES "src/*.cpp")
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
+  "${CMAKE_SOURCE_DIR}/src/*.cpp"
+)
 
 add_executable(ab_engine ${SRC_FILES})
 
@@ -18,7 +20,6 @@ if(EMSCRIPTEN)
   target_link_options(ab_engine PRIVATE
     "--shell-file" "../../web/shell.html"
     "--use-port=emdawnwebgpu"
-    # "-sUSE_WEBGPU=1"
     "--closure=1"
     "-sASSERTIONS=1"
     "-sALLOW_MEMORY_GROWTH=1"

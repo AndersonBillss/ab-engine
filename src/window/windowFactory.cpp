@@ -1,0 +1,27 @@
+#include "windowFactory.hpp"
+#ifdef __EMSCRIPTEN__
+#include "canvasWindow.hpp"
+#else // not __EMSCRIPTEN
+#include "glfwWindow.hpp"
+#endif // not __EMSCRIPTEN
+
+namespace WindowFactory
+{
+    std::unique_ptr<Window> createWindow(int width, int height, std::string title)
+    {
+#ifdef __EMSCRIPTEN__
+        return std::make_unique<CanvasWindow>(width, height, title);
+#else  // not __EMSCRIPTEN
+        return std::make_unique<GlfwWindow>(width, height, title);
+#endif // not __EMSCRIPTEN
+    }
+
+    std::unique_ptr<Window> createWindow(std::string title)
+    {
+#ifdef __EMSCRIPTEN__
+        return std::make_unique<CanvasWindow>(title);
+#else  // not __EMSCRIPTEN
+        return std::make_unique<GlfwWindow>(title);
+#endif // not __EMSCRIPTEN
+    }
+}
