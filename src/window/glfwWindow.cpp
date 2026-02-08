@@ -37,10 +37,10 @@ void GlfwWindow::run()
     while (!glfwWindowShouldClose(_win))
     {
         std::chrono::time_point now = std::chrono::steady_clock::now();
-        double dt = (now - last).count();
+        double dtSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(now - last).count();
         last = now;
         glfwPollEvents();
-        this->_onTick(dt);
+        this->_onTick(dtSeconds);
     }
     this->_onExit();
 }
