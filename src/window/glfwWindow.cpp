@@ -1,4 +1,5 @@
 #include "glfwWindow.hpp"
+#include <iostream>
 
 GlfwWindow::~GlfwWindow()
 {
@@ -10,6 +11,11 @@ GlfwWindow::GlfwWindow(int width, int height, std::string title) : Window(width,
     this->width_ = width;
     this->height_ = height;
     this->title_ = std::move(title);
+    if (!glfwInit())
+    {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        exit(-1);
+    }
     _win = glfwCreateWindow(width, height, "GLFW Window", nullptr, nullptr);
 }
 

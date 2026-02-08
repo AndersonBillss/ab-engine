@@ -278,15 +278,15 @@ int main(int, char **)
   std::cout << "Command submitted." << std::endl;
 
   auto window = WindowFactory::createWindow("My Window");
-  // if (!window->isInitialized())
-  // {
-  //   std::cerr << "Could not initialize window!" << std::endl;
-  //   return 1;
-  // }
-  // while (!window->shouldClose())
-  // {
-  //   window->pollEvents();
-  // }
+  if (!window->isInitialized())
+  {
+    std::cerr << "Could not initialize window!" << std::endl;
+    return 1;
+  }
+  while (!window->shouldClose())
+  {
+    window->pollEvents();
+  }
 
   wgpuQueueRelease(queue);
   wgpuDeviceRelease(device);
