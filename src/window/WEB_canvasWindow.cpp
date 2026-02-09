@@ -41,3 +41,17 @@ bool CanvasWindow::isInitialized()
 {
     return true;
 }
+
+WGPUSurface CanvasWindow::getSurface(WGPUInstance instance)
+{
+    WGPUEmscriptenSurfaceSourceCanvasHTMLSelector canvasSelector = WGPU_EMSCRIPTEN_SURFACE_SOURCE_CANVAS_HTML_SELECTOR_INIT;
+    canvasSelector.chain.sType = WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector;
+    std::string canvasId = "canvas";
+    canvasSelector.selector = WGPUStringView{
+        /* data */ canvasId.c_str(),
+        /* length */ canvasId.length(),
+    };
+    WGPUSurfaceDescriptor desc = WGPU_SURFACE_DESCRIPTOR_INIT;
+    desc.nextInChain = &canvasSelector.chain;
+    return wgpuInstanceCreateSurface(instance, &desc);
+}

@@ -14,6 +14,7 @@ public:
     void setOnExit(Window::ExitCallback cb) override;
     void run() override;
     bool isInitialized() override;
+    WGPUSurface getSurface(WGPUInstance instance) override;
 
 private:
     Window::TickCallback _onTick;

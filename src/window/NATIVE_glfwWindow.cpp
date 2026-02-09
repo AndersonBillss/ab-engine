@@ -1,6 +1,7 @@
 #include "NATIVE_glfwWindow.hpp"
 #include <iostream>
 #include <chrono>
+#include <glfw3webgpu.h>
 
 GlfwWindow::~GlfwWindow()
 {
@@ -48,4 +49,9 @@ void GlfwWindow::run()
 bool GlfwWindow::isInitialized()
 {
     return _win != nullptr;
+}
+
+WGPUSurface GlfwWindow::getSurface(WGPUInstance instance)
+{
+    return glfwCreateWindowWGPUSurface(instance, this->_win);
 }

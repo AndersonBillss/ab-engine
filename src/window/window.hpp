@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <webgpu/webgpu.h>
 
 class Window
 {
@@ -19,6 +20,7 @@ public:
     virtual void setOnTick(TickCallback cb) = 0;
     virtual void setOnExit(ExitCallback cb) = 0;
     virtual void run() = 0;
+    virtual WGPUSurface getSurface(WGPUInstance instance) = 0;
 
 protected:
     int width_ = 0;
