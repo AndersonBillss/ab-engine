@@ -11,6 +11,9 @@ This project uses WebGPU as its graphics API. WebGPU is a modern GPU API designe
 - WebGPU C API specification
   https://webgpu-native.github.io/webgpu-headers/
 
+- W3C Draft
+  https://www.w3.org/TR/webgpu/
+
 - Dawn Documentation
   https://dawn.googlesource.com/dawn/
 
