@@ -105,6 +105,9 @@
         print(...args) {
           outputText(args.join(" "));
         },
+        printErr(...args) {
+          outputText(args.join(" "))
+        },
         locateFile(path) {
           if (path.endsWith(".wasm")) {
             return path + "?v=" + Date.now();
