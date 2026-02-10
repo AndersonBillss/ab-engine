@@ -1,6 +1,5 @@
-include(sources.cmake)
-
 cmake_minimum_required(VERSION 3.21)
+include(sources.cmake)
 project(AbEngine LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -8,14 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(ab_engine ${AB_ENGINE_SOURCES})
 
-target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
-
 if(EMSCRIPTEN)
   target_sources(ab_engine PRIVATE 
     ${AB_ENGINE_SOURCES_WEB}
   )
   set_target_properties(ab_engine PROPERTIES SUFFIX ".html")
-  target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMSCRIPTEN)
+  target_compile_definitions(ab_engine PRIVATE WEBGPU_BACKEND_EMDAWNWEBGPU=1)
   
   target_compile_options(ab_engine PRIVATE "--use-port=emdawnwebgpu")
   target_link_options(ab_engine PRIVATE
@@ -28,6 +25,7 @@ if(EMSCRIPTEN)
   )
 
 else()
+  target_compile_definitions(ab_engine PRIVATE AB_ENGINE_USE_GLFW=1)
   target_sources(ab_engine PRIVATE 
     ${AB_ENGINE_SOURCES_NATIVE}
   )

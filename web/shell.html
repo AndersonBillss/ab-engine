@@ -53,7 +53,6 @@
     <script type="text/javascript">
       var canvasElement = document.getElementById("canvas");
       var canvasParentElement = document.getElementById("canvas-parent");
-      const ctx = canvasElement.getContext("2d");
 
       const minTerminalHeight = 100;
       const minCanvasHeight = 100;
@@ -138,8 +137,6 @@
           canvasElement.width = bufferWidth;
           canvasElement.height = bufferHeight;
         }
-
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         return { width: rect.width, height: rect.height, dpr };
       }
