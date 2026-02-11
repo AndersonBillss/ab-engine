@@ -1,4 +1,4 @@
-from subprocess import run
+from subprocess import run, SubprocessError
 import sys
 from gen_sources import gen_sources
 
@@ -151,7 +151,13 @@ def execute_build(build_command):
     else:
         build_fn = COMMANDS[sys.argv[1]]
         print(build_command)
-        build_fn()
+        print("BEFORE")
+        try:
+            build_fn()
+        except KeyboardInterrupt:
+            pass
+        except SubprocessError:
+            pass
 
 
 if len(sys.argv) == 1:

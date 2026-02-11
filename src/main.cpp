@@ -280,7 +280,7 @@ int main(int, char **)
   auto window = WindowFactory::createWindow("My Window");
   auto surface = window->getSurface(instance);
   window->setOnTick([](double dt)
-                    { std::cout << "DeltaTime: " << dt << std::endl; });
+                    { /* std::cout << "DeltaTime: " << dt << std::endl; */ });
   window->setOnExit([surface, queue, device, adapter, instance]()
                     {
     wgpuSurfaceRelease(surface);
