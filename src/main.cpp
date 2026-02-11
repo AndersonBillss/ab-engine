@@ -279,10 +279,14 @@ int main(int, char **)
 
   auto window = WindowFactory::createWindow("My Window");
   auto surface = window->getSurface(instance);
+  WGPUSurfaceConfiguration surfaceConfig = WGPU_SURFACE_CONFIGURATION_INIT;
+  wgpuSurfaceConfigure(surface, &surfaceConfig);
+
   window->setOnTick([](double dt)
-                    { /* std::cout << "DeltaTime: " << dt << std::endl; */ });
+                    { std::cout << "DeltaTime: " << dt << std::endl; });
   window->setOnExit([surface, queue, device, adapter, instance]()
                     {
+    wgpuSurfaceUnconfigure(surface);
     wgpuSurfaceRelease(surface);
     wgpuQueueRelease(queue);
     wgpuDeviceRelease(device);
